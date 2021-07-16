@@ -1,7 +1,7 @@
 #!/bin/bash
 python3 -m venv env
 source env/bin/activate
-pip install django wheel django-rest-framework python-socketio
+pip install django wheel uvicorn django-rest-framework websockets python-socketio
 pip freeze > requirements.txt
 # python -m django --version
 django-admin startproject core .
@@ -42,7 +42,7 @@ export DJANGO_SETTINGS_MODULE=core.settings.development
 
 case "\$1" in
     "dev" | "-d" )
-        python3 -m uvicorn core.asgi:application --reload --port 5000  --ws websockets ;;
+        python3 -m uvicorn core.srv:app --reload --port 5000  --ws websockets ;;
     "check" )
         flake8 adminplus/ --exclude=tests*.py ;;
     "shell" | "-s" )
@@ -67,21 +67,20 @@ EOL
 
 chmod +x run.sh
 
-cat > core/asgi.py <<EOL
-"""custom asgi"""
-
-
+cat > core/sio.py <<EOL
 import os
-import socketio
-from django.core.asgi import get_asgi_application
+from socketio import AsyncServer
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.production')
+sio = AsyncServer(async_mode='asgi',
+                           cors_allowed_origins=['http://127.0.0.1:3000'],
+                           logger=False)
+EOL
 
-sio = socketio.AsyncServer(async_mode='asgi',
-                           cors_allowed_origins=['http://127.0.0.1:3000',
-                                                 'https://psyhologram.ru'],
-                           logger=False) # socketio logger
+cat > core/srv.py <<EOL
+from socketio import ASGIApp
+from .asgi import application
+from .sio import sio
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings.production")
-application = get_asgi_application()
-application = socketio.ASGIApp(sio, application)
+app = ASGIApp(sio, application)
 EOL
