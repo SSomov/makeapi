@@ -27,6 +27,7 @@ export PYTHONPATH=".:$PYTHONPATH"
 usage() {
     echo "USAGE: \$0 [command]"
     echo "  dev | -d -- run django debug mode"
+    echo "  prod | -p -- run django prod mode"
     echo "  check - run flake8 checks"
     echo "  shell | -s -- open the Django shell"
     echo "  makemigrate - makemigrate Django"
@@ -43,6 +44,9 @@ export DJANGO_SETTINGS_MODULE=core.settings.development
 case "\$1" in
     "dev" | "-d" )
         python3 -m uvicorn core.srv:app --reload --port 5000  --ws websockets ;;
+    "prod" | "-p" )
+        export DJANGO_SETTINGS_MODULE=core.settings.production
+        python3 -m uvicorn core.srv:app --reload --host 0.0.0.0 --port 80  --ws websockets ;;
     "check" )
         flake8 adminplus/ --exclude=tests*.py ;;
     "shell" | "-s" )
