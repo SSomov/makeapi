@@ -98,3 +98,5 @@ from .sio import sio
 
 app = ASGIApp(sio, application)
 EOL
+
+pipreqs . --force
