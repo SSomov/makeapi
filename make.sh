@@ -8,8 +8,18 @@ django-admin startproject core .
 mkdir core/settings/
 touch core/settings/__init__.py
 mv core/settings.py core/settings/base.py
-cp core/settings/base.py core/settings/development.py
-cp core/settings/base.py core/settings/production.py
+cat > core/settings/development.py <<EOL
+from .base import *
+
+
+DEBUG = True
+EOL
+cat > core/settings/production.py <<EOL
+from .base import *
+
+
+DEBUG = False
+EOL
 
 # cat > task.py <<EOL
 # from core import settings 
