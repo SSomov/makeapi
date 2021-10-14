@@ -2,7 +2,7 @@
 python3 -m venv env
 source env/bin/activate
 pip install django python-dotenv pipreqs wheel uvicorn django-rest-framework websockets python-socketio
-pipreqs . --force
+
 # python -m django --version
 django-admin startproject core .
 mkdir core/settings/
@@ -100,3 +100,4 @@ app = ASGIApp(sio, application)
 EOL
 
 pipreqs . --force
+rm make.sh
