@@ -1,7 +1,7 @@
 #!/bin/bash
 python3 -m venv env
 source env/bin/activate
-pip install django pipreqs wheel uvicorn django-rest-framework websockets python-socketio
+pip install django python-dotenv pipreqs wheel uvicorn django-rest-framework websockets python-socketio
 pipreqs . --force
 # python -m django --version
 django-admin startproject core .
